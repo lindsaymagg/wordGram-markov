@@ -1,0 +1,135 @@
+This is the analysis for Markov Part 2, Fall 2018
+
+Lindsay Maggioncalda
+lnm22
+
+(1) Determine (from running Benchmark.java) how long it takes for 
+BaseMarkov to generate 2,000, 4,000, 8,000, 16,000, and 32,000 
+random characters using the default file and an order 5 Markov Model. 
+Include these timings in your report. 
+The program also generates 4,096 characters using texts that increase in 
+size from 496,768 characters to 4,967,680 characters (10 times the number).  
+Do the timings support the O(NT) analysis for BaseMarkov?
+
+time	source	#chars
+0.232	496768	2000
+0.444	496768	4000
+0.887	496768	8000
+1.412	496768	16000
+3.523	496768	32000
+
+These timings do support the O(NT) analysis for BaseMarkov. While N is held constant
+and T is doubled, the time it takes for the program to execute roughly doubles as well,
+which it should because the complexity is O(NT).
+For example, when #chars(T) is changed from 2000 to 4000 (doubled), time changes from .232 to .444
+(roughly gets doubled). This makes sense because (time) = NT, so when T is doubled, 
+N*2T = 2(time).
+
+For the second group of tests, if N were doubling, we would expect the time it takes for the
+program to run to double as well. But N is not doubling each time—it's increasing by a constant:
+~500,000. When N is 1490304 and T is 4096, time is 1.342. Then, T is held constant, and
+N increases by around 500,000 to become 1987072; in other words, N is multiplied by 1.33. So if
+the complexity is O(NT), we should expect time to roughly be multiplied by 1.33 as well—which it is,
+as time then becomes 1.864, which is close to the answer we would expect 1.342*1.33 = 1.785.
+These results are what we would expect from a program with complexity O(NT).
+
+time	source	#chars
+0.508	496768	4096
+0.976	993536	4096
+1.342	1490304	4096
+1.864	1987072	4096
+2.421	2483840	4096
+3.013	2980608	4096
+3.373	3477376	4096
+3.757	3974144	4096
+4.272	4470912	4096
+5.743	4967680	4096
+
+
+(2) Determine (from running Benchmark.java) how long it takes for 
+EfficientMarkov to generate 2,000, 4,000, 8,000, 16,000, and 32,000 
+random characters using the default file and an order 5 Markov Model. 
+Include these timings in your report. 
+The program also generates 4,096 characters using texts that increase in 
+size from 496,768 characters to 4,967,680 characters (10 times the number).  
+Do the timings support the O(N+T) analysis for EfficientMarkov?
+
+time	source	#chars
+0.175	496768	2000
+0.131	496768	4000
+0.132	496768	8000
+0.148	496768	16000
+0.159	496768	32000
+
+Whereas in BaseMarkov, time doubled as T doubled, in EfficientMarkov, time does not double as T doubles.
+Time barely increases as T increases. Sometimes it decreases, but this is likely due to
+variations in run time (as ola himself said, timing in Java is "suspect") which affect the mean a lot
+because we are only using 5 trials. If we had more trials, in the long run, we should expect the runtimes
+to increase as #chars increases. 
+Also, since N is so much bigger than T, as T doubles, it's still a lot smaller than N so it doesn't make a huge
+difference on runtime. Compared to T's impact on runtime in O(NT), in O(N+T), since T is added to N and not
+multiplied, T's impact is much smaller. When N is 496768 and T is 32000, runtime for BaseMarkov (O(NT)) is
+3.523. In EfficientMarkov (O(N+T)), runtime is .159. The fact that T clearly has much smaller impact on 
+runtime in EfficientMarkov than BaseMarkov, which is O(NT), supports the O(N+T) analysis for EfficientMarkov.
+
+Likewise, as T is held constant and N increases by ~500000, N has less impact on runtime in EfficientMarkov
+than it does in BaseMarkov, supporting the O(N+T) analysis for EfficientMarkov. 
+
+0.127	496768	4096
+0.237	993536	4096
+0.351	1490304	4096
+0.476	1987072	4096
+0.576	2483840	4096
+0.732	2980608	4096
+0.929	3477376	4096
+1.889	3974144	4096
+2.027	4470912	4096
+2.377	4967680	4096
+
+
+(3)The tests in the class Benchmark use an order-5 Markov Model. 
+Run tests that you think are appropriate to determine if the order of the 
+Markov Model has a significant impact on the running time for BaseMarkov. 
+Explain your reasoning.
+
+Order 1:
+time	source	#chars
+2.105	496768	2000
+4.229	496768	4000
+8.411	496768	8000
+
+Order 2:
+time	source	#chars
+0.458	496768	2000
+0.908	496768	4000
+1.817	496768	8000
+
+Order 3: 
+time	source	#chars
+0.267	496768	2000
+0.569	496768	4000
+1.201	496768	8000
+
+Order 7:
+time	source	#chars
+0.274	496768	2000
+0.540	496768	4000
+1.142	496768	8000
+
+Order 15:
+time	source	#chars
+0.210	496768	2000
+0.407	496768	4000
+0.682	496768	8000
+
+Looking at this data, it appears that order doesn't have a huge effect on runtime, unless the order is
+1. In general, as order goes up, run time decreases. Run time still doubles as T doubles, but the starting
+run time decreases as the order increases. The trend seems pretty subtle, but when the order is
+1, run time is substantially slower: at order 1, the first run time is 2.105, and at order 2, it jumps 
+down to .458. This is because BaseMarkov operates by looking through the entire text every single time
+a new substring is being examined. When the substring is only one character, it is more likely that there will
+be repeats. For example, if the first string is "a", it is pretty likely that there will be many more "a"s, 
+and each time we get to an "a" we have to find the following character and add it to a list. The greater the
+order of the substring we are searching for, the less likely it is that we would run into that specific 
+combination. So the greater the order of the substring, the more easily the file is scanned through (so it
+takes less time.)

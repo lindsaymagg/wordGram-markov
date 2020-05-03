@@ -1,0 +1,66 @@
+Lindsay Maggioncalda lnm22
+
+Run WordGramDiver for wordgrams of size 2-10 and record
+the number of WordGram values/objects that occur more than
+once as reported by the runs. For example, with WSIZE = 2,
+which generates 2-grams, the output of benchmark and benchmarkShift
+each indicates that the total # wordgrams generated is 177,634
+and that the # unique wordgrams is 117,181
+
+This means there are 177,634 - 117,181 = 60,453 WordGram values that
+occur more than once. Find these same values for other orders
+of k and complete the table below for different k-grams/different 
+values of WSIZE
+
+WSIZE    # duplicates
+2        60,453
+3        10,756
+4		 1,987
+5		 667
+6		 362
+7		 226
+8		 151
+9		 105
+10		 73
+
+=====
+Explain in your own words the conceptual differences between 
+the benchmark and benchmarkShift methods. 
+Answer these questions: 
+
+(1) Why the results of these methods should be the same in 
+terms of changes made to the HashSet parameter.
+
+The results should be the same because the two methods are essentially doing the same thing;
+they are filling an empty set of WordGrams with WordGrams that are constructed within the
+method. They fill the sets in different ways, but they will have the same result. They
+are both being passed empty sets and the same file with the same words in it, and both hashSets
+will discard any duplicates, so the values for these two methods should be the same.
+
+(2) What are the conceptual differences between the two
+benchmarking methods
+
+For the benchmark method, because there is a for loop, you have to iterate through every word, 
+which takes a lot of time. It has to run through it N times, and then since in the main it
+is called in a for loop, it has to run through it another N times, so it takes a really long time.
+When it is constructing the WordGrams and filling the set with them, it has to iterate through the
+entire thing. The benchmarkShift however utilizes the shiftAdd method, so it is more efficient in 
+making WordGrams because it only has to go through the entire list once, as each time a WordGram is
+made it's just shifting over one and creating another.
+
+(3) Is the total amount of memory allocated for arrays
+the same or different in the two methods? Account for
+arrays created in the methods and arrays created by
+WordGram objects. Try to be quantitative in answering.
+
+The memory allocated every time a WordGram is made is the size of the array, which is the size of WordGram.
+Benchmark makes an array the size of all words in the file, and then a ton of WordGrams are created using the
+words from this array. Every time a WordGram is made, more memory must be allocated to constructing arrays for 
+those WordGrams.
+In benchmarkShift, the first array that is made is only WSize. Then, a new WordGram is made, which means an array
+is made that is WSize. After that, the first area is replaced by an array of WSize one index shifted over, and another
+array of WSize is made when the next WordGram is constructed during shiftAdd.
+So the memory allocated for benchMark is greater than that of benchMarkShift. Benchmark has to allocate memory space
+for every single word in the file, and then for a bunch of Wsize WordGrams. BenchmarkShift however only allocates
+memory space for a WSize array, and then proceeds to use that same space when the other arrays are created. More memory
+is allocated for each WordGram that is constructed, but overall it is much less memory than is allocated for benchmark.
